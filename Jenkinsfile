@@ -1,6 +1,6 @@
 pipeline {
   environment {
-   / /login id/docker reposotory defined in Jenkins
+   //login id/docker reposotory defined in Jenkins
     registry = "dipankar435/docker-repo"
     //credential = Id given jenkins
     registryCredential = 'dockerhub'
