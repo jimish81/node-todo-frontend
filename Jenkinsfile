@@ -1,10 +1,9 @@
 pipeline {
   environment {
-     //
-    //login id/docker reposotory defined in Jenkins followed by registry name created in dockerhub
-    registry = "jimish22/jenkin-docker"
+   / /login id/docker reposotory defined in Jenkins
+    registry = "dipankar435/docker-repo"
     //credential = Id given jenkins
-    registryCredential = 'DockerHub'
+    registryCredential = 'dockerhub'
     dockerImage = ''
     //checked if any container is running with same name node-app container Id will store same & stage cleanup will close that container
     containerId = sh(script: 'docker ps -aqf "name=node-app"', returnStdout: true)
@@ -35,5 +34,33 @@ pipeline {
         }
       }
     }
-     }
+    stage('Push Image') {
+      steps{
+         script {
+            docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('Cleanup') {
+      when {
+                not { environment ignoreCase: true, name: 'containerId', value: '' }
+        }
+      steps {
+        sh 'docker stop ${containerId}'
+        sh 'docker rm ${containerId}'
+      }
+    }
+    stage('Run Container') {
+      steps {
+        sh 'docker run --name=node-app -d -p 3000:3000 $registry:$BUILD_NUMBER &'
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
+      }
+    }
+  }
 }
