@@ -1,9 +1,9 @@
 pipeline {
   environment {
     //login id/docker reposotory defined in Jenkins
-    registry = "dipankar435/docker-repo"
+    registry = "jimish22/jenkin-docker"
     //credential = Id given jenkins
-    registryCredential = 'dockerhub'
+    registryCredential = 'DockerHub'
     dockerImage = ''
     //checked if any container is running with same name node-app container Id will store same & stage cleanup will close that container
     containerId = sh(script: 'docker ps -aqf "name=node-app"', returnStdout: true)
